@@ -4,16 +4,16 @@ void main() {
   runApp(
     MaterialApp(
       home: Scaffold(
+        appBar: AppBar(
+          title: Text('Apprendre Flutter'),
+        ),
         body: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('Bonjour'),
-              Text('Flutter'),
-            ],
+            children: [Text('Salut j\'apprend Flutter'),
+            Text('Hello World')],
           ),
         ),
       ),
-    ),
+    )
   );
 }
