@@ -1,14 +1,33 @@
 import 'package:flutter/material.dart';
 
-class MaCarte extends StatelessWidget {
-  final String titre;
-  final String sousTitre;
+class CarteVisite extends StatelessWidget {
+  final String nom;
+  final String metier;
+  final String ville;
 
-  const MaCarte({super.key, required this.titre, required this.sousTitre});
+  const CarteVisite({
+    super.key,
+    required this.nom,
+    required this.metier,
+    required this.ville,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Column(children: [Text(titre), Text(sousTitre)]));
+    return Card(
+  child: Center(
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    Text(nom),
+    SizedBox(width: 10),
+    Text(metier),
+    SizedBox(width: 10),
+    Text(ville),
+  ],
+),
+  ),
+);
   }
 }
 
@@ -16,7 +35,15 @@ void main() {
   runApp(
     MaterialApp(
       home: Scaffold(
-        body: MaCarte(titre: 'StatelessWidget', sousTitre: 'Lesson 6'),
+        body: Center(
+          child: Column(
+            children: [
+            CarteVisite(nom: 'Charlie', metier: 'Devloppeur', ville: 'Paris'),
+            SizedBox(height: 20),
+            CarteVisite(nom: 'Bob Martin', metier: 'Designer', ville: 'Lyon'),
+          ],
+          ),
+        ),
       ),
     ),
   );
