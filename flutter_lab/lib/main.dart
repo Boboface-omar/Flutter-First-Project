@@ -1,103 +1,86 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const Safi());
+  runApp(
+    const MaterialApp(
+      home: CounterPage(),
+    ),
+  );
 }
 
-class Safi extends StatelessWidget {
-  const Safi({super.key});
+class CounterPage extends StatefulWidget {
+  const CounterPage({super.key});
+
+  @override
+  State<CounterPage> createState() => _CounterPageState();
+}
+
+class _CounterPageState extends State<CounterPage> {
+  int compteur = 0;
+
+  void incrementer() {
+    setState(() {
+      compteur++;
+    });
+  }
+
+  void decrementer() {
+    setState(() {
+      compteur--;
+    });
+  }
+
+  void reinitialiser() {
+    setState(() {
+      compteur = 0;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: const Text('SAFI')),
-        body: const Center(child: Formulaire()),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Mon compteur'),
       ),
-    );
-  }
-}
 
-class Formulaire extends StatefulWidget {
-  const Formulaire({super.key});
-
-  @override
-  State<Formulaire> createState() => _FormulaireState();
-}
-
-class _FormulaireState extends State<Formulaire> {
-  final _nomController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
-
-  void _soumettre() {
-    if (_formKey.currentState!.validate()) {
-      final nom = _nomController.text;
-      final email = _emailController.text;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Nom: $nom, Email: $email')));
-    }
-  }
-
-  @override
-  void dispose() {
-    _nomController.dispose();
-    _emailController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const Text(
-            'Remplissez le formulaire',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 32),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32),
-            child: TextFormField(
-              controller: _nomController,
-              decoration: const InputDecoration(
-                labelText: 'Nom',
-                border: OutlineInputBorder(),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              '$compteur',
+              style: const TextStyle(
+                fontSize: 50,
               ),
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'Veuillez entrer votre nom';
-                }
-                return null;
-              },
             ),
-          ),
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32),
-            child: TextFormField(
-              controller: _emailController,
-              decoration: const InputDecoration(
-                labelText: 'Email',
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'Veuillez entrer votre email';
-                }
-                if (!value.contains('@')) {
-                  return 'Email invalide';
-                }
-                return null;
-              },
+
+            const SizedBox(height: 20),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: decrementer,
+                  child: const Text('-'),
+                ),
+
+                const SizedBox(width: 10),
+
+                ElevatedButton(
+                  onPressed: reinitialiser,
+                  child: const Text('Reset'),
+                ),
+
+                const SizedBox(width: 10),
+
+                ElevatedButton(
+                  onPressed: incrementer,
+                  child: const Text('+'),
+                ),
+              ],
             ),
-          ),
-          const SizedBox(height: 32),
-          ElevatedButton(onPressed: _soumettre, child: const Text('Continuer')),
-        ],
+          ],
+        ),
       ),
     );
   }
