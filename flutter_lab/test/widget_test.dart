@@ -11,18 +11,19 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_lab/main.dart';
 
 void main() {
-  testWidgets('Affiche le profil et incrémente les followers', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MonApplication());
+  testWidgets('valide le formulaire', (WidgetTester tester) async {
+    await tester.pumpWidget(const Safi());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0 followers'), findsOneWidget);
+    expect(find.text('Remplissez le formulaire'), findsOneWidget);
 
-    // Tap the button and trigger a frame.
-    await tester.tap(find.text('Suivre'));
+    await tester.enterText(find.widgetWithText(TextFormField, 'Nom'), 'Alice');
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Email'),
+      'alice@example.com',
+    );
+    await tester.tap(find.text('Continuer'));
     await tester.pump();
 
-    // Verify that the counter has incremented.
-    expect(find.text('1 followers'), findsOneWidget);
+    expect(find.text('Nom: Alice, Email: alice@example.com'), findsOneWidget);
   });
 }
