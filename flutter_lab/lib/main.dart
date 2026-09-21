@@ -5,11 +5,13 @@ void main() {
     MaterialApp(
       home: Scaffold(
         body: Center(
-          child: Column(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Expanded(child: Container(color: Colors.yellow)),
-              Expanded(child: Container(color: Colors.blue)),
-              Expanded(child: Container(color: Colors.red))
+              Icon(Icons.person),
+              SizedBox(width: 15),
+              Flexible(child: Text('Oumar Bobo Diallo',
+              overflow: TextOverflow.ellipsis,)),
             ],
           ),
         ),
