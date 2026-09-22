@@ -4,9 +4,7 @@ void main() {
   runApp(
     const MaterialApp(
       home: Scaffold(
-        body: Center(
-          child: CarteProfil(),
-        ),
+        body: Center(child: CarteProfil()),
       ),
     ),
   );
@@ -17,57 +15,45 @@ class CarteProfil extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 300,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 10),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,  // Prend seulement la hauteur nécessaire
-        children: [
-          // --- Avatar ---
-          const CircleAvatar(
-            radius: 40,
-            backgroundColor: Colors.blue,
-            child: Icon(Icons.person, size: 40, color: Colors.white),
-          ),
-          const SizedBox(height: 15),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Sur petit écran (< 400px), on empile
+        final bool petitEcran = constraints.maxWidth < 400;
 
-          // --- Nom ---
-          const Text(
-            'Alice Dupont',
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        return Container(
+          width: petitEcran ? constraints.maxWidth : 300,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(15),
+            boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
           ),
-          const SizedBox(height: 5),
+          child: petitEcran
+              ? _buildColonne()
+              : _buildLigne(),
+        );
+      },
+    );
+  }
 
-          // --- Métier ---
-          const Text(
-            'Développeuse Flutter',
-            style: TextStyle(color: Colors.grey),
-          ),
-          const SizedBox(height: 20),
+  Widget _buildColonne() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const CircleAvatar(radius: 40, child: Icon(Icons.person)),
+        const SizedBox(height: 10),
+        const Text('Alice', style: TextStyle(fontSize: 20)),
+      ],
+    );
+  }
 
-          // --- Boutons (Row) ---
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(
-                onPressed: () {},
-                child: const Text('Suivre'),
-              ),
-              OutlinedButton(
-                onPressed: () {},
-                child: const Text('Message'),
-              ),
-            ],
-          ),
-        ],
-      ),
+  Widget _buildLigne() {
+    return Row(
+      children: [
+        const CircleAvatar(radius: 30, child: Icon(Icons.person)),
+        const SizedBox(width: 15),
+        const Text('Alice', style: TextStyle(fontSize: 20)),
+      ],
     );
   }
 }
