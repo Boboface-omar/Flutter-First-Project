@@ -5,25 +5,23 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:flutter_lab/main.dart';
 
 void main() {
-  testWidgets('valide le formulaire', (WidgetTester tester) async {
-    await tester.pumpWidget(const Safi());
+  test('splash_person asset exists', () {
+    expect(File('assets/images/splash_person.png').existsSync(), isTrue);
+  });
 
-    expect(find.text('Remplissez le formulaire'), findsOneWidget);
+  testWidgets('renders splash screen content', (WidgetTester tester) async {
+    await tester.pumpWidget(const MaterialApp(home: SplashScreen()));
 
-    await tester.enterText(find.widgetWithText(TextFormField, 'Nom'), 'Alice');
-    await tester.enterText(
-      find.widgetWithText(TextFormField, 'Email'),
-      'alice@example.com',
-    );
-    await tester.tap(find.text('Continuer'));
-    await tester.pump();
-
-    expect(find.text('Nom: Alice, Email: alice@example.com'), findsOneWidget);
+    expect(find.text('Découvrez.'), findsOneWidget);
+    expect(find.text('Les exclusivités.'), findsOneWidget);
+    expect(find.byType(Image), findsOneWidget);
   });
 }
