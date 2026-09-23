@@ -31,10 +31,10 @@ class SplashScreen extends StatelessWidget {
           // COUCHE 1 : IMAGE DU PERSONNAGE (derrière les textes)
           // ─────────────────────────────────────────────────
           Positioned(
-            right: 0,
+            right: -200,
             bottom: 0,
-            width: size.width * 0.70,
-            height: size.height * 0.75,
+            width: size.width * 0.95,
+            height: size.height * 0.95,
             child: Image.asset(
               'assets/images/splash_person.png',
               fit: BoxFit.contain,
@@ -100,7 +100,7 @@ class SplashScreen extends StatelessWidget {
           // COUCHE 4 : SOUS-TITRE
           // ─────────────────────────────────────────────────
           Positioned(
-            top: size.height * 0.335,
+            top: size.height * 0.330,
             left: margeGauche,
             right: size.width * 0.28,
             child: const Text(
