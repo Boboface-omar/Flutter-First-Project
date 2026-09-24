@@ -2,53 +2,31 @@ import 'package:flutter/material.dart';
 
 void main() {
   runApp(
-    const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: Center(child: Banniere()),
-      ),
+    MaterialApp(
+      home: Scaffold(body: Stack(children: [
+        Center(child: Container(
+          width: 150,
+          height: 150,
+          decoration: BoxDecoration(
+            color: Colors.purple.shade200,
+            borderRadius: BorderRadius.circular(12)
+          ),
+          child: Center(child: Text('CENTRE', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),),),
+        ),),
+        Padding(
+          padding: EdgeInsets.all(20),
+        child: Align(
+          alignment: Alignment.topRight,
+          child: Text('Coin haut-droit', style: TextStyle(fontSize: 16, color: Colors.red),),
+        )),
+        Padding(
+          padding: EdgeInsets.all(20),
+        child: Align(
+          alignment: Alignment.bottomLeft,
+          child: Text('Coin haut-droit', style: TextStyle(fontSize: 16, color: Colors.green),),
+        )),
+          ],
+        )),
     ),
   );
-}
-
-class Banniere extends StatelessWidget {
-  const Banniere({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 300,
-      height: 150,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.deepPurple, Colors.purpleAccent],
-        ),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      padding: const EdgeInsets.all(20),
-      child: FittedBox(
-        fit: BoxFit.contain,
-        alignment: Alignment.centerLeft,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: const [
-            Text(
-              'MÉGA SOLDES',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 40,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              '-50% sur tout le store',
-              style: TextStyle(color: Colors.white70, fontSize: 20),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
