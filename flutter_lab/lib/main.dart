@@ -6,17 +6,58 @@ void main() {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: SafeArea(
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              height: 60,
-              color: Colors.white,
-              child: Row(
+          child: Center(
+            child: Padding(
+              padding: EdgeInsets.all(24),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Expanded(child: Icon(Icons.home, color: Colors.blue)),
-                  Expanded(child: Icon(Icons.search, color: Colors.grey)),
-                  Expanded(child: Icon(Icons.favorite, color: Colors.grey)),
-                  Expanded(child: Icon(Icons.person, color: Colors.grey)),
+                    Padding(padding: EdgeInsets.all(15),
+                    child: Row(
+                        children: [
+                            Icon(Icons.arrow_back),
+                            Spacer(),
+                            Icon(Icons.more_vert),
+                        ],
+                    ),
+                    ),
+                    
+                  CircleAvatar(radius: 50, child: Icon(Icons.person)),
+                  Text(
+                    'Alice Dupont',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    'Développeuse Flutter',
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
+                  SizedBox(height: 24),
+                  Row(
+                    children: [
+                      Expanded(child: _buildStat('128', 'Posts')),
+                      Expanded(child: _buildStat('2.4k', 'Follow')),
+                      Expanded(child: _buildStat('512', 'Likes')),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {},
+                          child: Text('Suivre'),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Flexible(
+                    child: Text(
+                      'Passionnée par Flutter et le développement mobile. '
+                      'J\'aime créer des interfaces élégantes et performantes.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 14, color: Colors.grey),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -24,5 +65,14 @@ void main() {
         ),
       ),
     ),
+  );
+}
+
+Widget _buildStat(String value, String label) {
+  return Column(
+    children: [
+      Text(value, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+      Text(label, style: TextStyle(color: Colors.grey)),
+    ],
   );
 }
