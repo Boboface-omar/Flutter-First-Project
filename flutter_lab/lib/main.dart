@@ -7,7 +7,10 @@ void main() {
       home: Scaffold(
         body: SafeArea(
           child: Center(
-            child: Padding(padding: EdgeInsets.all(16), child: ProductCard()),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: ProductCard(),
+            ),
           ),
         ),
       ),
@@ -20,40 +23,62 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Card(
-      child: Padding(padding: EdgeInsets.all(15), child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          AspectRatio(aspectRatio: 16/9,
-          child: Image.asset('assets/images/logo.png'),
-          ),
-          Positioned(bottom: 0, left: 0,child: Padding(padding: EdgeInsets.all(15), child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Produit Flutter'),
-              SizedBox(height: 15,),
-              Text('Développement mobile'),
-              SizedBox(height: 15,),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  Chip(label: Text('Flutter')),
-                  Chip(label: Text('Dart')),
-                  Chip(label: Text('Mobile')),
-                ],
+      child: Padding(
+        padding: const EdgeInsets.all(15),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: Image.asset(
+                'assets/images/logo.png',
+                fit: BoxFit.contain,
               ),
-              SizedBox(height: 15,),
-              Align(
-                alignment: Alignment.bottomRight,
-                child: Text('25 000 F'),
-              )
-            ],
-          ),))
-        ],
-      ),)
+            ),
+
+            const SizedBox(height: 15),
+
+            const Text(
+              'Produit Flutter',
+            ),
+
+            const SizedBox(height: 15),
+
+            const Text(
+              'Développement mobile',
+            ),
+
+            const SizedBox(height: 15),
+
+            const Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                Chip(
+                  label: Text('Flutter'),
+                ),
+                Chip(
+                  label: Text('Dart'),
+                ),
+                Chip(
+                  label: Text('Mobile'),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 15),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                const Text('25 000 F'),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
