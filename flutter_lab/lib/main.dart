@@ -21,61 +21,109 @@ class PromoPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // ─────────────────────────────────────
-        // 1. BANNIÈRE PROMOTIONNELLE
-        // ─────────────────────────────────────
-        const BannierePromo(),
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const BannierePromo(),
+          const SizedBox(height: 24),
 
-        const SizedBox(height: 24),
+          const Text(
+            'Catégories populaires',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 12),
 
-        // ─────────────────────────────────────
-        // 2. TITRE DE SECTION
-        // ─────────────────────────────────────
-        const Text(
-          'Catégories populaires',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 12),
+          // Grille de carrés avec IMAGES
+          Row(
+            children: [
+              Expanded(child: _buildCarreImage(0)),
+              const SizedBox(width: 8),
+              Expanded(child: _buildCarreImage(1)),
+              const SizedBox(width: 8),
+              Expanded(child: _buildCarreImage(2)),
+              const SizedBox(width: 8),
+              Expanded(child: _buildCarreImage(3)),
+            ],
+          ),
 
-        // ─────────────────────────────────────
-        // 3. GRILLE DE 4 CARRÉS
-        // ─────────────────────────────────────
-        Row(
-          children: [
-            Expanded(child: _buildCarre(Icons.image)),
-            const SizedBox(width: 8),
-            Expanded(child: _buildCarre(Icons.shopping_bag)),
-            const SizedBox(width: 8),
-            Expanded(child: _buildCarre(Icons.local_offer)),
-            const SizedBox(width: 8),
-            Expanded(child: _buildCarre(Icons.star)),
-          ],
-        ),
-      ],
+          const SizedBox(height: 24),
+
+          // BONUS : Les prix avec FittedBox
+          const Text(
+            'Meilleures ventes',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 12),
+
+          Row(
+            children: const [
+              Expanded(child: _PrixCard(prix: '29,99 €', nom: 'Casque')),
+              SizedBox(width: 8),
+              Expanded(child: _PrixCard(prix: '149,99 €', nom: 'Veste')),
+              SizedBox(width: 8),
+              Expanded(child: _PrixCard(prix: '1299,00 €', nom: 'Ordinateur')),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
-  // Méthode helper pour les carrés
-  Widget _buildCarre(IconData icon) {
+  // Carré avec Image de fond
+  Widget _buildCarreImage(int index) {
     return AspectRatio(
       aspectRatio: 1.0,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.grey.shade200,
-          borderRadius: BorderRadius.circular(12),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Image.network(
+          'https://picsum.photos/seed/$index/200/200',
+          fit: BoxFit.cover,
         ),
-        child: Icon(icon, size: 32, color: Colors.grey.shade700),
       ),
     );
   }
 }
 
-// ═════════════════════════════════════════════
-// BANNIÈRE PROMOTIONNELLE
-// ═════════════════════════════════════════════
+// ─────────────────────────────────────
+// CARTE PRIX AVEC FittedBox
+// ─────────────────────────────────────
+class _PrixCard extends StatelessWidget {
+  final String prix;
+  final String nom;
+
+  const _PrixCard({required this.prix, required this.nom});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // FittedBox pour que le prix tienne toujours
+        SizedBox(
+          width: double.infinity,
+          height: 24,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              prix,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.blue,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(nom, style: const TextStyle(fontSize: 13, color: Colors.grey)),
+      ],
+    );
+  }
+}
+
+// (La BannierePromo reste identique à la version précédente)
 class BannierePromo extends StatelessWidget {
   const BannierePromo({super.key});
 
@@ -86,15 +134,11 @@ class BannierePromo extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
         child: Container(
-          // Le dégradé violet → rose
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                Color(0xFF7B2FF7),  // Violet
-                Color(0xFFF107A3),  // Rose vif
-              ],
+              colors: [Color(0xFF7B2FF7), Color(0xFFF107A3)],
             ),
           ),
           child: Padding(
@@ -102,9 +146,6 @@ class BannierePromo extends StatelessWidget {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                // ─────────────────────────────────────
-                // COUCHE 1 : Titre + Sous-titre
-                // ─────────────────────────────────────
                 const Align(
                   alignment: Alignment.topLeft,
                   child: Column(
@@ -117,24 +158,16 @@ class BannierePromo extends StatelessWidget {
                           color: Colors.white,
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          letterSpacing: 0.5,
                         ),
                       ),
                       SizedBox(height: 8),
                       Text(
                         '-50% sur tout le store',
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 15,
-                        ),
+                        style: TextStyle(color: Colors.white70, fontSize: 15),
                       ),
                     ],
                   ),
                 ),
-
-                // ─────────────────────────────────────
-                // COUCHE 2 : Bouton "SHOPPER"
-                // ─────────────────────────────────────
                 Align(
                   alignment: Alignment.bottomRight,
                   child: ElevatedButton.icon(
@@ -144,17 +177,11 @@ class BannierePromo extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: const Color(0xFF7B2FF7),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
-                      textStyle: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 13,
-                      ),
+                      textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                     ),
                   ),
                 ),
