@@ -1,39 +1,49 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MaterialApp(home: Acceuil()));
+  runApp(MaterialApp(home: HomePage()));
 }
 
-class Acceuil extends StatelessWidget {
-  const Acceuil({super.key});
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: ((context) => Destination())),
-              );
-            },
-            child: Text('Navigation'),
-          ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Page2()),
+            );
+          },
+          child: Text('Vers page 02'),
         ),
       ),
     );
   }
 }
 
-class Destination extends StatelessWidget {
-  Destination({super.key});
+class Page2 extends StatelessWidget {
+  const Page2({super.key});
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Scaffold(body: Center(child: Text('Destination')));
+    return Scaffold(
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text('Retour vers HomePage'),
+        ),
+      ),
+    );
   }
 }
+
+
+
