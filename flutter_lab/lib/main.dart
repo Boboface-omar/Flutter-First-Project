@@ -5,15 +5,17 @@ void main() {
     MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: SafeArea(child: ListView.separated(
-  itemCount: 20,
-  itemBuilder: (context, index) {
-    return ListTile(title: Text('Item $index'));
-  },
-  separatorBuilder: (context, index) {
-    return Divider();   // ← Ligne de séparation
-  },
-)),
+        body: SafeArea(
+          child: ListView.builder(
+            itemCount: 50,
+            itemBuilder: (context, index) => ListTile(
+                leading: Image.asset('assets/images/logo.png'),
+                title: Text('List'),
+                subtitle: Text('SousTitre'),
+                trailing: Image.asset('assets/images/logo.png'),
+              ),
+          ),
+        ),
       ),
     ),
   );
