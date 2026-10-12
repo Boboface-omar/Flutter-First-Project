@@ -4,43 +4,51 @@ void main() {
   runApp(
     const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: GaleriePage(),
+      home: HomePage(),
     ),
   );
 }
 
-class GaleriePage extends StatelessWidget {
-  const GaleriePage({super.key});
+// ═════════════════════════════════════════════
+// PAGE 1 : Accueil
+// ═════════════════════════════════════════════
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Galerie')),
-      body: GridView.builder(
-        padding: const EdgeInsets.all(2),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          mainAxisSpacing: 2,
-          crossAxisSpacing: 2,
-          mainAxisExtent: 130,
+      appBar: AppBar(title: const Text('Accueil')),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const DetailPage()),
+            );
+          },
+          child: const Text('Aller au détail'),
         ),
-        itemCount: 30,
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Photo ${index + 1} sélectionnée'),
-                  duration: const Duration(seconds: 1),
-                ),
-              );
-            },
-            child: Image.network(
-              'https://picsum.photos/seed/$index/200/200',
-              fit: BoxFit.cover,
-            ),
-          );
-        },
+      ),
+    );
+  }
+}
+
+// ═════════════════════════════════════════════
+// PAGE 2 : Détail
+// ═════════════════════════════════════════════
+class DetailPage extends StatelessWidget {
+  const DetailPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Détail')),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Retour'),
+        ),
       ),
     );
   }
