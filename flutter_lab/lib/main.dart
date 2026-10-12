@@ -73,13 +73,23 @@ class MessagesPage extends StatelessWidget {
               style: const TextStyle(fontSize: 12, color: Colors.grey),
             ),
             onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Message de $nom ouvert'),
-                  duration: const Duration(seconds: 2),
-                ),
-              );
-            },
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text('Message de $nom'),
+      duration: const Duration(seconds: 3),
+      behavior: SnackBarBehavior.floating,   // ← Flotte au-dessus
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      action: SnackBarAction(
+        label: 'Répondre',
+        onPressed: () {
+          print('Répondre à $nom');
+        },
+      ),
+    ),
+  );
+},
           );
         },
         separatorBuilder: (context, index) => const Divider(height: 1),
