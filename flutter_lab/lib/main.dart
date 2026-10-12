@@ -1,83 +1,47 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MaterialApp(home: Scaffold(body: SafeArea(child: GalerieProduits()))));
+  runApp(
+    const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: GaleriePage(),
+    ),
+  );
 }
 
-class GalerieProduits extends StatelessWidget {
-  const GalerieProduits({super.key});
-
-  final List<Map<String, String>> produits = const [
-    {'nom': 'Veste polaire', 'prix': '149,99 €'},
-    {'nom': 'Sweat à capuche', 'prix': '89,99 €'},
-    {'nom': 'Bonnet chaud', 'prix': '39,99 €'},
-    {'nom': 'Chaussures trail', 'prix': '129,99 €'},
-    {'nom': 'Gants thermiques', 'prix': '29,99 €'},
-    {'nom': 'Écharpe laine', 'prix': '49,99 €'},
-  ];
+class GaleriePage extends StatelessWidget {
+  const GaleriePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      padding: const EdgeInsets.all(16),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        mainAxisExtent: 240,  // ← Hauteur fixe
+    return Scaffold(
+      appBar: AppBar(title: const Text('Galerie')),
+      body: GridView.builder(
+        padding: const EdgeInsets.all(2),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          mainAxisSpacing: 2,
+          crossAxisSpacing: 2,
+          mainAxisExtent: 130,
+        ),
+        itemCount: 30,
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Photo ${index + 1} sélectionnée'),
+                  duration: const Duration(seconds: 1),
+                ),
+              );
+            },
+            child: Image.network(
+              'https://picsum.photos/seed/$index/200/200',
+              fit: BoxFit.cover,
+            ),
+          );
+        },
       ),
-      itemCount: produits.length,
-      itemBuilder: (context, index) {
-        final produit = produits[index];
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: const [
-              BoxShadow(color: Colors.black12, blurRadius: 8),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Image
-              Expanded(
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                  child: Image.network(
-                    'https://picsum.photos/seed/$index/300/300',
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                  ),
-                ),
-              ),
-              // Contenu
-              Padding(
-                padding: const EdgeInsets.all(8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      produit['nom']!,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      produit['prix']!,
-                      style: const TextStyle(
-                        color: Colors.blue,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-      },
     );
   }
 }
