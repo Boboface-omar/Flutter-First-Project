@@ -1,55 +1,39 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(
-    const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: HomePage(),
-    ),
-  );
+  runApp(MaterialApp(home: Acceuil()));
 }
 
-// ═════════════════════════════════════════════
-// PAGE 1 : Accueil
-// ═════════════════════════════════════════════
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class Acceuil extends StatelessWidget {
+  const Acceuil({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // TODO: implement build
     return Scaffold(
-      appBar: AppBar(title: const Text('Accueil')),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const DetailPage()),
-            );
-          },
-          child: const Text('Aller au détail'),
+      body: SafeArea(
+        child: Center(
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: ((context) => Destination())),
+              );
+            },
+            child: Text('Navigation'),
+          ),
         ),
       ),
     );
   }
 }
 
-// ═════════════════════════════════════════════
-// PAGE 2 : Détail
-// ═════════════════════════════════════════════
-class DetailPage extends StatelessWidget {
-  const DetailPage({super.key});
+class Destination extends StatelessWidget {
+  Destination({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Détail')),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Retour'),
-        ),
-      ),
-    );
+    // TODO: implement build
+    return Scaffold(body: Center(child: Text('Destination')));
   }
 }
