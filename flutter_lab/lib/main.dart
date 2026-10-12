@@ -6,17 +6,17 @@ void main() {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: SafeArea(
-          child: GridView.count(
-            crossAxisCount: 2,
+          child: GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2,
             mainAxisSpacing: 12,
             crossAxisSpacing: 12,
-            padding: const EdgeInsets.all(16),
-            children: [
-              Container(color: Colors.red),
-              Container(color: Colors.blue),
-              Container(color: Colors.green),
-              Container(color: Colors.orange),
-            ],
+            childAspectRatio: 0.75,     // Ratio largeur/hauteur
+            ),
+            itemCount: 20,
+            itemBuilder: (context, index) => Container(
+                color: Colors.blue.shade100,
+      child: Center(child: Text('Item $index')),
+            ),
           ),
         ),
       ),
