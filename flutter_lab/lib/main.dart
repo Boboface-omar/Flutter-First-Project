@@ -5,13 +5,9 @@ void main() {
     MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: SafeArea(child: ListView(
-          children: [
-            ListTile(title: Text('data'),),
-            ListTile(title: Text('data'),),
-            ListTile(title: Text('data'),),
-            ListTile(title: Text('data'),)
-          ],
+        body: SafeArea(child: ListView.builder(
+          itemCount: 1000,
+          itemBuilder: (context, index) => ListTile(title: Text('data $index'),),
         )),
       ),
     ),
