@@ -4,26 +4,24 @@ void main() {
   runApp(
     MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Builder(
-        builder: (context) {
-          return Scaffold(
-            body: SafeArea(
-              child: Center(
-                child: FilledButton(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Snackbar'),
-                        duration: Duration(seconds: 5),
-                      ),
-                    );
-                  },
-                  child: Text('Snackbar'),
-                ),
+      home: Scaffold(
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 12,
+                crossAxisSpacing: 12,
+                mainAxisExtent: 200,
               ),
+              itemCount: 20,
+              itemBuilder: (BuildContext context, int index) {
+                return Container(color: Colors.amber);
+              },
             ),
-          );
-        },
+          ),
+        ),
       ),
     ),
   );
