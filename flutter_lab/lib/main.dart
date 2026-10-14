@@ -2,46 +2,39 @@ import 'package:flutter/material.dart';
 
 void main() {
   runApp(
-    const MaterialApp(
+    MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Grille(),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent,
+        brightness: Brightness.dark,
+        ),
+      ),
+      home: Scaffold(
+        appBar: AppBar(title: Text('HOME'),
+        centerTitle: true,
+        leading: Icon(Icons.home),
+        actions: [
+          Icon(Icons.construction)
+        ],
+        backgroundColor: const Color.fromARGB(255, 159, 120, 6),
+        ),
+        body: Center(child: Container(
+          width: 150,
+          height: 150,
+          decoration: BoxDecoration(
+            color: Colors.amber,
+            borderRadius: BorderRadius.circular(50),
+          ),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Center(
+                child: Image.asset('assets/images/logo.png', fit: BoxFit.cover,),
+              )
+            ],
+          ),
+        ),),
+      ),
     ),
   );
-}
-
-class Grille extends StatelessWidget {
-  const Grille({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Galerie')),
-      body: GridView.builder(
-        padding: const EdgeInsets.all(2),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          mainAxisSpacing: 2,
-          crossAxisSpacing: 2,
-          mainAxisExtent: 130,
-        ),
-        itemCount: 30,
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Photo ${index + 1} sélectionnée'),
-                  duration: const Duration(seconds: 1),
-                ),
-              );
-            },
-            child: Image.network(
-              'https://picsum.photos/seed/$index/200/200',
-              fit: BoxFit.cover,
-            ),
-          );
-        },
-      ),
-    );
-  }
 }
