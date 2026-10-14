@@ -17,7 +17,7 @@ void main() {
               ),
               itemCount: 20,
               itemBuilder: (BuildContext context, int index) {
-                return Container(color: Colors.amber);
+                return Container(color: Colors.amber, child: Center(child: Image.asset('assets/images/logo.png', fit: BoxFit.cover,),),);
               },
             ),
           ),
