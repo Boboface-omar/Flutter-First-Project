@@ -24,11 +24,7 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       home: Scaffold(
-        appBar: AppBar(
-          title: Text('Flutter Mapp'),
-          centerTitle: true,
-          leading: Icon(Icons.map),
-        ),
+        appBar: AppBar(title: Text('Statefull BottomNav'), centerTitle: true),
         bottomNavigationBar: NavigationBar(
           destinations: [
             NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
