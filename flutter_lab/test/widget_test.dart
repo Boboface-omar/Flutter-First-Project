@@ -17,11 +17,10 @@ void main() {
     expect(File('assets/images/splash_person.png').existsSync(), isTrue);
   });
 
-  testWidgets('renders splash screen content', (WidgetTester tester) async {
-    await tester.pumpWidget(const MaterialApp(home: SplashScreen()));
+  testWidgets('renders app shell', (WidgetTester tester) async {
+    await tester.pumpWidget(const MyApp());
 
-    expect(find.text('Découvrez.'), findsOneWidget);
-    expect(find.text('Les exclusivités.'), findsOneWidget);
-    expect(find.byType(Image), findsOneWidget);
+    expect(find.text('Statefull BottomNav'), findsOneWidget);
+    expect(find.byType(NavigationBar), findsOneWidget);
   });
 }

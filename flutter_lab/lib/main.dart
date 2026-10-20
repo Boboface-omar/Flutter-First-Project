@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_lab/widgets/navbar_widget.dart';
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatefulWidget {
-  const new({super.key});
+  const MyApp({super.key});
 
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  int selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -25,16 +25,7 @@ class _MyAppState extends State<MyApp> {
       ),
       home: Scaffold(
         appBar: AppBar(title: Text('Statefull BottomNav'), centerTitle: true),
-        bottomNavigationBar: NavigationBar(
-          destinations: [
-            NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
-            NavigationDestination(icon: Icon(Icons.person), label: 'Profile'),
-          ],
-          onDestinationSelected: (int value) => setState(() {
-            selectedIndex = value;
-          }),
-          selectedIndex: selectedIndex,
-        ),
+        bottomNavigationBar: NavbarWidget(),
       ),
     );
   }
