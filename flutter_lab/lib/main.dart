@@ -4,42 +4,35 @@ void main() {
   runApp(const MyApp());
 }
 
-// Widget racine qui contient le MaterialApp
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blueAccent,
-          brightness: Brightness.dark,
-        ),
-      ),
-      home: const FormulairePage(),
+      home: Formulaire(),
     );
   }
 }
 
-// Écran de formulaire séparé
-class FormulairePage extends StatefulWidget {
-  const FormulairePage({super.key});
+class Formulaire extends StatefulWidget {
+  const Formulaire({super.key});
 
   @override
-  State<FormulairePage> createState() => _FormulairePageState();
+  State<Formulaire> createState() => _FormulaireState();
 }
 
-class _FormulairePageState extends State<FormulairePage> {
-  final TextEditingController _nomCompletControler = TextEditingController();
-  final TextEditingController _emailControler = TextEditingController();
+class _FormulaireState extends State<Formulaire> {
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  
+  // ⚠️ Plus de 'final' ici
+  bool _obscure = true; 
 
   @override
   void dispose() {
-    _nomCompletControler.dispose();
-    _emailControler.dispose();
+    _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
@@ -47,68 +40,97 @@ class _FormulairePageState extends State<FormulairePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Formulaire D'inscription"),
-        centerTitle: true,
-        leading: const Icon(Icons.arrow_back),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(15.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _nomCompletControler,
-              decoration: InputDecoration(
-                labelText: 'Nom Complet',
-                hintText: 'Oumar Bobo',
-                prefixIcon: const Icon(Icons.face),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
+      // ⚠️ Inversion SafeArea / ScrollView
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Center(child: Icon(Icons.lock_outline, size: 80)),
+              const SizedBox(height: 20),
+              const Text(
+                'Connexion',
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center, // ← Ajout pour centrer le texte
+              ),
+              const SizedBox(height: 40),
+              
+              // CHAMP EMAIL
+              TextField(
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  hintText: 'exemple@gmail.com',
+                  prefixIcon: Icon(Icons.email),
+                  border: OutlineInputBorder(),
                 ),
               ),
-            ),
-            const SizedBox(height: 25),
-            TextField(
-              controller: _emailControler,
-              keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
-                labelText: 'Email',
-                hintText: 'Oumar@gamil.com',
-                prefixIcon: const Icon(Icons.email),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-              ),
-            ),
-            const SizedBox(height: 25),
-            TextField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: 'Mot de passe',
-                hintText: 'Votre Mot de passe sécurisé',
-                prefixIcon: const Icon(Icons.password_outlined),
-                suffixIcon: const Icon(Icons.remove_red_eye_sharp),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-              ),
-            ),
-            const SizedBox(height: 25),
-            ElevatedButton(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'Nom : ${_nomCompletControler.text}\nEmail : ${_emailControler.text}',
+              const SizedBox(height: 16),
+              
+              // CHAMP MOT DE PASSE
+              TextField(
+                controller: _passwordController,
+                obscureText: _obscure,
+                decoration: InputDecoration(
+                  labelText: 'Mot de Passe',
+                  prefixIcon: const Icon(Icons.lock),
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      // ⚠️ Le setState magique
+                      setState(() {
+                        _obscure = !_obscure;
+                      });
+                    },
+                    // ⚠️ L'icône change selon l'état
+                    icon: Icon(
+                      _obscure ? Icons.visibility : Icons.visibility_off,
                     ),
-                    duration: const Duration(seconds: 2),
                   ),
-                );
-              },
-              child: const Text('Connexion'),
-            ),
-          ],
+                  border: const OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 24),
+              
+              // BOUTON SE CONNECTER
+              ElevatedButton(
+                onPressed: () {
+                  // ⚠️ La logique corrigée
+                  if (_emailController.text.isEmpty ||
+                      _passwordController.text.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Veuillez remplir tous les champs'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Connexion avec ${_emailController.text}'),
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                },
+                child: const Text('Se connecter'),
+              ),
+              
+              // BOUTON MOT DE PASSE OUBLIÉ
+              Align(
+                alignment: Alignment.bottomLeft,
+                child: TextButton(
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Fonctionnalité à venir')),
+                    );
+                  },
+                  child: const Text('Mot de passe oublié ?'),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
