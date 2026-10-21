@@ -82,8 +82,19 @@ class _FormulaireState extends State<Formulaire> {
                     labelText: 'Mot de passe',
                     suffixIcon: Icon(Icons.lock),
                     prefixIcon: IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.remove_red_eye_outlined),
+                      onPressed: () {
+                        setState(() {
+                          _obscure = !_obscure;
+                        });
+                      },
+                      tooltip: _obscure
+                          ? 'Afficher le mot de passe'
+                          : 'Masquer le mot de passe',
+                      icon: Icon(
+                        _obscure
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined,
+                      ),
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -102,7 +113,7 @@ class _FormulaireState extends State<Formulaire> {
                   ),
                 ),
                 SizedBox(height: 20),
-                Container(
+                SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {

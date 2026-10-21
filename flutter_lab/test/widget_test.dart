@@ -23,4 +23,27 @@ void main() {
     expect(find.text('Statefull BottomNav'), findsOneWidget);
     expect(find.byType(NavigationBar), findsOneWidget);
   });
+
+  testWidgets('password visibility can be toggled', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const MyApp());
+
+    final passwordField = find.byWidgetPredicate(
+      (widget) =>
+          widget is TextField && widget.decoration?.labelText == 'Mot de passe',
+    );
+    expect(tester.widget<TextField>(passwordField).obscureText, isTrue);
+
+    await tester.tap(find.byTooltip('Afficher le mot de passe'));
+    await tester.pump();
+
+    expect(tester.widget<TextField>(passwordField).obscureText, isFalse);
+    expect(find.byTooltip('Masquer le mot de passe'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Masquer le mot de passe'));
+    await tester.pump();
+
+    expect(tester.widget<TextField>(passwordField).obscureText, isTrue);
+  });
 }
