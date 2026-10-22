@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-void main() {
+void man() {
   runApp(MyApp());
 }
 
@@ -9,7 +9,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: Formulaire());
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Formulaire(),
+    );
   }
 }
 
@@ -21,97 +24,72 @@ class Formulaire extends StatefulWidget {
 }
 
 class _FormulaireState extends State<Formulaire> {
-  final _formKey = GlobalKey<FormState>();
-
+  final _formkey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+  bool _obscure = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Center(
+        child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: SingleChildScrollView(
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextFormField(
-                      decoration: InputDecoration(
-                        labelText: 'Nom complet',
-                        hintText: 'Oumar Diallo',
-                        suffixIcon: Icon(Icons.person),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
+            padding: EdgeInsets.all(10.0),
+            child: Form(
+              key: _formkey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextFormField(
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: InputDecoration(
+                      labelText: 'Email',
+                      hintText: '123@gmail.com',
+                      suffixIcon: Icon(Icons.email),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Veuillez saisir votre nom complet';
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Invalide';
+                      }
+                    },
+                  ),
+                  SizedBox(height: 30),
+                  TextFormField(
+                    obscureText: _obscure,
+                    decoration: InputDecoration(
+                      labelText: 'Mot de Passe',
+                      prefixIcon: Icon(Icons.lock),
+                      suffixIcon: Icon(Icons.remove_red_eye),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Obligatoire';
+                      } else if (value.length > 8) {
+                        return 'Au moins 6 caractères';
+                      }
+                    },
+                  ),
+                  SizedBox(height: 30),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (_formkey.currentState!.validate()) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Connexion avec {$_emailController.text}')),
+                          );
                         }
-                        return null;
                       },
+                      child: Text('Se connecter'),
                     ),
-                    SizedBox(height: 20),
-                    TextFormField(
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(
-                        labelText: 'E-mail',
-                        hintText: 'oumar@example.com',
-                        suffixIcon: Icon(Icons.email),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                      validator: (value) {
-                        final email = value?.trim() ?? '';
-                        if (email.isEmpty) {
-                          return 'Veuillez saisir votre adresse e-mail';
-                        }
-                        if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
-                            .hasMatch(email)) {
-                          return 'Veuillez saisir une adresse e-mail valide';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 20),
-                    TextFormField(
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        labelText: 'Mot de passe',
-                        hintText: 'Saisissez votre mot de passe',
-                        suffixIcon: Icon(Icons.lock),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        prefixIcon: Icon(Icons.remove_red_eye),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Veuillez saisir votre mot de passe';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 20),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState?.validate() ?? false) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Formulaire valide'),
-                              ),
-                            );
-                          }
-                        },
-                        child: Text('Se connecter'),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
