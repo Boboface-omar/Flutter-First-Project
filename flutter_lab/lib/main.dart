@@ -21,133 +21,101 @@ class Formulaire extends StatefulWidget {
 }
 
 class _FormulaireState extends State<Formulaire> {
-  final TextEditingController _nomCompletController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  bool _obscure = true;
-
-  @override
-  void dispose() {
-    _nomCompletController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'FORMULAIRE',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 30),
-                TextField(
-                  controller: _nomCompletController,
-                  decoration: InputDecoration(
-                    suffixIcon: Icon(Icons.person),
-                    labelText: 'Nom Complet',
-                    hintText: 'Oumar Bobo',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 20),
-                TextField(
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    suffixIcon: Icon(Icons.email),
-                    labelText: 'Email',
-                    hintText: 'Oumar@gmail.com',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 20),
-                TextField(
-                  controller: _passwordController,
-                  obscureText: _obscure,
-                  decoration: InputDecoration(
-                    labelText: 'Mot de passe',
-                    suffixIcon: Icon(Icons.lock),
-                    prefixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          _obscure = !_obscure;
-                        });
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'Nom complet',
+                        hintText: 'Oumar Diallo',
+                        suffixIcon: Icon(Icons.person),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Veuillez saisir votre nom complet';
+                        }
+                        return null;
                       },
-                      tooltip: _obscure
-                          ? 'Afficher le mot de passe'
-                          : 'Masquer le mot de passe',
-                      icon: Icon(
-                        _obscure
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined,
+                    ),
+                    SizedBox(height: 20),
+                    TextFormField(
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: InputDecoration(
+                        labelText: 'E-mail',
+                        hintText: 'oumar@example.com',
+                        suffixIcon: Icon(Icons.email),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      validator: (value) {
+                        final email = value?.trim() ?? '';
+                        if (email.isEmpty) {
+                          return 'Veuillez saisir votre adresse e-mail';
+                        }
+                        if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
+                            .hasMatch(email)) {
+                          return 'Veuillez saisir une adresse e-mail valide';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 20),
+                    TextFormField(
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        labelText: 'Mot de passe',
+                        hintText: 'Saisissez votre mot de passe',
+                        suffixIcon: Icon(Icons.lock),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        prefixIcon: Icon(Icons.remove_red_eye),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Veuillez saisir votre mot de passe';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 20),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (_formKey.currentState?.validate() ?? false) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Formulaire valide'),
+                              ),
+                            );
+                          }
+                        },
+                        child: Text('Se connecter'),
                       ),
                     ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
+                  ],
                 ),
-                SizedBox(height: 20),
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: TextButton(
-                    onPressed: () {
-                      ScaffoldMessenger.of(context)
-                          .showSnackBar(SnackBar(content: Text('A venir')));
-                    },
-                    child: Text('Mot de passe oublie ?'),
-                  ),
-                ),
-                SizedBox(height: 20),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (_nomCompletController.text.isEmpty ||
-                          _emailController.text.isEmpty ||
-                          _passwordController.text.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Ne doivent pas etre vide')),
-                        );
-                      } else {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const Homepage(
-                        )));
-                      }
-                    },
-                    child: Text('Connexion'),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class Homepage extends StatelessWidget {
-  const Homepage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text('HOME', style: TextStyle(fontSize: 60, fontWeight: FontWeight.bold),),
       ),
     );
   }
