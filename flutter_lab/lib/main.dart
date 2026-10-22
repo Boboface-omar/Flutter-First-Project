@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-void man() {
-  runApp(MyApp());
+// ⚠️ Correction du nom de la fonction
+void main() {
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -24,69 +25,108 @@ class Formulaire extends StatefulWidget {
 }
 
 class _FormulaireState extends State<Formulaire> {
-  final _formkey = GlobalKey<FormState>();
+  // ⚠️ Convention : 'K' majuscule
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   bool _obscure = true;
+
+  // ⚠️ Ajout du dispose
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.all(10.0),
+            padding: const EdgeInsets.all(10.0),
             child: Form(
-              key: _formkey,
+              key: _formKey,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                // ⚠️ mainAxisAlignment retiré car inutile ici
                 children: [
+                  // CHAMP EMAIL
                   TextFormField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
                       labelText: 'Email',
                       hintText: '123@gmail.com',
-                      suffixIcon: Icon(Icons.email),
+                      prefixIcon: const Icon(Icons.email), // Ajout d'un prefixIcon pour cohérence
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
                     ),
+                    // ⚠️ Validation corrigée
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Invalide';
+                        return 'L\'email est obligatoire';
                       }
+                      if (!value.contains('@')) {
+                        return 'Format d\'email invalide';
+                      }
+                      return null;
                     },
                   ),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
+
+                  // CHAMP MOT DE PASSE
                   TextFormField(
+                    controller: _passwordController,
                     obscureText: _obscure,
                     decoration: InputDecoration(
                       labelText: 'Mot de Passe',
-                      prefixIcon: Icon(Icons.lock),
-                      suffixIcon: Icon(Icons.remove_red_eye),
+                      prefixIcon: const Icon(Icons.lock),
+                      // ⚠️ Le bouton œil fonctionnel
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _obscure = !_obscure;
+                          });
+                        },
+                        icon: Icon(
+                          _obscure ? Icons.visibility : Icons.visibility_off,
+                        ),
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
                     ),
+                    // ⚠️ Validation corrigée
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Obligatoire';
-                      } else if (value.length > 8) {
+                        return 'Le mot de passe est obligatoire';
+                      } else if (value.length < 6) {
                         return 'Au moins 6 caractères';
                       }
+                      return null;
                     },
                   ),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
+
+                  // BOUTON
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        if (_formkey.currentState!.validate()) {
+                        if (_formKey.currentState!.validate()) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Connexion avec {$_emailController.text}')),
+                            SnackBar(
+                              // ⚠️ Interpolation corrigée (avec le $)
+                              content: Text(
+                                'Connexion avec ${_emailController.text}',
+                              ),
+                            ),
                           );
                         }
                       },
-                      child: Text('Se connecter'),
+                      child: const Text('Se connecter'),
                     ),
                   ),
                 ],
