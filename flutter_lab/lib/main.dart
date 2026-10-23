@@ -1,37 +1,30 @@
 import 'package:flutter/material.dart';
 
-// ⚠️ Correction du nom de la fonction
 void main() {
-  runApp(const MyApp());
+  runApp(Myapp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class Myapp extends StatelessWidget {
+  const Myapp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Formulaire(),
-    );
+    return const MaterialApp(home: Formulaire());
   }
 }
 
 class Formulaire extends StatefulWidget {
-  const Formulaire({super.key});
+  const new({super.key});
 
   @override
   State<Formulaire> createState() => _FormulaireState();
 }
 
 class _FormulaireState extends State<Formulaire> {
-  // ⚠️ Convention : 'K' majuscule
-  final _formKey = GlobalKey<FormState>();
+  final _formkey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _obscure = true;
 
-  // ⚠️ Ajout du dispose
   @override
   void dispose() {
     _emailController.dispose();
@@ -43,92 +36,67 @@ class _FormulaireState extends State<Formulaire> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
+        child: Center(
           child: Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: EdgeInsets.all(15.0),
             child: Form(
-              key: _formKey,
+              key: _formkey,
               child: Column(
-                // ⚠️ mainAxisAlignment retiré car inutile ici
                 children: [
-                  // CHAMP EMAIL
                   TextFormField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
                       labelText: 'Email',
-                      hintText: '123@gmail.com',
-                      prefixIcon: const Icon(Icons.email), // Ajout d'un prefixIcon pour cohérence
+                      hintText: 'Votre Email',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
+                      prefixIcon: Icon(Icons.email),
                     ),
-                    // ⚠️ Validation corrigée
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'L\'email est obligatoire';
+                        return 'mail obligatoire';
                       }
                       if (!value.contains('@')) {
-                        return 'Format d\'email invalide';
+                        return 'Mail invalide';
                       }
                       return null;
                     },
                   ),
-                  const SizedBox(height: 30),
-
-                  // CHAMP MOT DE PASSE
+                  SizedBox(height: 20,),
                   TextFormField(
                     controller: _passwordController,
-                    obscureText: _obscure,
+                    obscureText: true,
                     decoration: InputDecoration(
-                      labelText: 'Mot de Passe',
-                      prefixIcon: const Icon(Icons.lock),
-                      // ⚠️ Le bouton œil fonctionnel
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            _obscure = !_obscure;
-                          });
-                        },
-                        icon: Icon(
-                          _obscure ? Icons.visibility : Icons.visibility_off,
-                        ),
-                      ),
+                      labelText: 'Password',
+                      hintText: 'Votre Mot de passe',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
+                      prefixIcon: Icon(Icons.password),
+                      suffix: IconButton(onPressed: () {}, icon: Icon(Icons.remove_red_eye))
                     ),
-                    // ⚠️ Validation corrigée
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Le mot de passe est obligatoire';
-                      } else if (value.length < 6) {
-                        return 'Au moins 6 caractères';
+                        return 'Mot de passe obligatoire';
+                      }
+                      if (value.length < 6) {
+                        return 'MOt de passe au moins 6 caracteres';
                       }
                       return null;
                     },
                   ),
-                  const SizedBox(height: 30),
-
-                  // BOUTON
+                  SizedBox(height: 20,),
                   SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              // ⚠️ Interpolation corrigée (avec le $)
-                              content: Text(
-                                'Connexion avec ${_emailController.text}',
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                      child: const Text('Se connecter'),
-                    ),
-                  ),
+                    child: ElevatedButton(onPressed: () {
+                      if (_formkey.currentState!.validate()) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Connecter en tant que ${_emailController.text}')))
+                      }
+                    }, child: Text('Connexion')),
+                  )
+
                 ],
               ),
             ),
