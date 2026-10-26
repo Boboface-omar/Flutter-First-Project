@@ -64,7 +64,7 @@ class _FormulaireState extends State<Formulaire> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 20,),
+                  SizedBox(height: 20),
                   TextFormField(
                     controller: _passwordController,
                     obscureText: true,
@@ -75,7 +75,10 @@ class _FormulaireState extends State<Formulaire> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       prefixIcon: Icon(Icons.password),
-                      suffix: IconButton(onPressed: () {}, icon: Icon(Icons.remove_red_eye))
+                      suffix: IconButton(
+                        onPressed: () {},
+                        icon: Icon(Icons.remove_red_eye),
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -87,16 +90,24 @@ class _FormulaireState extends State<Formulaire> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 20,),
+                  SizedBox(height: 20),
                   SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton(onPressed: () {
-                      if (_formkey.currentState!.validate()) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Connecter en tant que ${_emailController.text}')))
-                      }
-                    }, child: Text('Connexion')),
-                  )
-
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (_formkey.currentState!.validate()) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Connecter en tant que ${_emailController.text}',
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                      child: Text('Connexion'),
+                    ),
+                  ),
                 ],
               ),
             ),
