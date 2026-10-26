@@ -1,68 +1,57 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;   // ← Alias ajouté
+import 'package:http/http.dart' as http;
+
+import 'dart:convert';
 
 void main() {
-  runApp( MyApp());
+  runApp(Myapp());
 }
 
-class MyApp extends StatelessWidget {
-   MyApp({super.key});
+class Myapp extends StatelessWidget {
+  const Myapp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return  MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: ApiTestpage(),
-    );
+    return MaterialApp(debugShowCheckedModeBanner: false, home: apiTestPage());
   }
 }
 
-class ApiTestpage extends StatelessWidget {
-   ApiTestpage({super.key});
+class apiTestPage extends StatelessWidget {
+   apiTestPage({super.key});
 
-  // ⚠️ Le Future est créé UNE SEULE FOIS ici
-  late final Future<String> _futurePosts = _recupPost();
+  late final _futurePosts = _recupPosts;
 
-  Future<String> _recupPost() async {
+  Future<String> _recupPosts() async {
     final response = await http.get(
       Uri.parse('https://jsonplaceholder.typicode.com/posts'),
     );
+    
 
     if (response.statusCode == 200) {
       return response.body;
     } else {
-      throw Exception('Erreur HTTP : ${response.statusCode}');
+      throw Exception(response.statusCode);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Test API'),   // ← const
-        centerTitle: true,
-        leading: const Icon(Icons.api),   // ← const
-      ),
-      body: SafeArea(
+      appBar: AppBar(title: Text('Api Testes'),centerTitle: true, leading: Icon(Icons.api_sharp),),
+      body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(20),   // ← const
-          child: FutureBuilder<String>(
-            future: _futurePosts,   // ← Utilisation de la variable
-            builder: (context, snapshot) {
-              // État 1 : Chargement
+          padding: const EdgeInsets.all(15.0),
+          child: FutureBuilder(
+            future: _futurePosts(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
+                return CircularProgressIndicator();
               }
-
-              // État 2 : Erreur
+          
               if (snapshot.hasError) {
-                return Center(child: Text('Erreur HTTP : ${snapshot.error}'));
+                return Center(child: Text('${snapshot.error}'),);
               }
-
-              // État 3 : Succès
-              return SingleChildScrollView(
-                child: Text('SUCCÈS : ${snapshot.data}'),
-              );
+              return Text(snapshot.data);
             },
           ),
         ),
