@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
 import 'dart:convert';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -12,12 +11,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: ApiTest());
+    return  MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: ApiTest(),
+    );
   }
 }
 
 class ApiTest extends StatelessWidget {
-  ApiTest({super.key});
+   ApiTest({super.key});
+
+  // ⚠️ Le Future est stocké une seule fois
   Future<List<Map<String, dynamic>>> get _futurePosts => _recupPosts();
 
   Future<List<Map<String, dynamic>>> _recupPosts() async {
@@ -26,58 +30,59 @@ class ApiTest extends StatelessWidget {
     );
 
     if (response.statusCode == 200) {
-      // 1. On décode le texte JSON
       final decoded = jsonDecode(response.body);
-      // 2. On le convertit en liste de Maps typée
       return List<Map<String, dynamic>>.from(decoded);
     } else {
-      throw Exception(response.statusCode);
+      throw Exception('Erreur serveur : ${response.statusCode}');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: _futurePosts,
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return Center(child: Text('Erreur du serveur : ${snapshot.error}'));
-          }
+      body: SafeArea( // SafeArea à l'extérieur car pas d'AppBar
+        child: FutureBuilder<List<Map<String, dynamic>>>(
+          future: _futurePosts,
+          // ⚠️ Snapshot typé
+          builder: (context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return Center(child: Text('Erreur : ${snapshot.error}'));
+            }
 
-          // 3. Succès
-          final posts = snapshot.data!; // Le '!' dit "je suis sûr que ce n'est pas null"
+            final posts = snapshot.data!;
 
-          return SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: ListView.builder( 
-                itemCount: posts.length, // Il y a 100 posts dans l'API
-                itemBuilder: (context, index) {
-                  final post = posts[index];
-              
-                  return ListTile(
-                    leading: CircleAvatar(child: Text('${index + 1}')),
-                    title: Text(
-                      post['title'], // On accède à la clé 'title'
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+            return ListView.builder(
+              padding: const EdgeInsets.all(15.0), // ⚠️ Padding dans le ListView
+              itemCount: posts.length,
+              itemBuilder: (context, index) {
+                final post = posts[index];
+                
+                return ListTile(
+                  leading: CircleAvatar(child: Text('${index + 1}')),
+                  title: Text(
+                    post['title'] ?? 'Sans titre', // ⚠️ Sécurité
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  subtitle: Text(
+                    post['body'] ?? 'Pas de description',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  onTap: () => ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(post['title'] ?? 'Sans titre'),
+                      duration: const Duration(seconds: 2),
                     ),
-                    subtitle: Text(
-                      post['body'],
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    onTap: () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(post['title']), duration: Duration(seconds: 2),)),
-                  );
-                },
-              ),
-            ),
-          );
-        },
+                  ),
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }
