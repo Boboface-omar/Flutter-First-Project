@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-final ValueNotifier<int> _scoreGoal = ValueNotifier<int>(0);
+final ValueNotifier<int> _scoreGlobal = ValueNotifier<int>(0);
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -11,7 +11,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: PageUn());
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: PageUn(),
+    );
   }
 }
 
@@ -21,37 +24,36 @@ class PageUn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Page 1'), centerTitle: true),
+      appBar: AppBar(title: const Text('Page 1'), centerTitle: true),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ValueListenableBuilder(
-              valueListenable: _scoreGoal,
-              builder: (BuildContext context, dynamic value, Widget? child) {
-                return Text('Score : $value');
+            ValueListenableBuilder<int>(
+              valueListenable: _scoreGlobal,
+              // ⚠️ Typé en int
+              builder: (context, int value, child) {
+                return Text('Score : $value', style: const TextStyle(fontSize: 24));
               },
             ),
-            SizedBox(height: 15.0),
+            const SizedBox(height: 15.0),
             ElevatedButton(
               onPressed: () {
-                _scoreGoal.value++;
+                _scoreGlobal.value++;
               },
-              child: Text('Ajouter + 1'),
+              child: const Text('Ajouter +1'),
             ),
-            SizedBox(height: 10.0),
+            const SizedBox(height: 10.0),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) {
-                      return PageDeux();
-                    },
+                    builder: (context) => const PageDeux(),
                   ),
                 );
               },
-              child: Text('Aller à la Page 2'),
+              child: const Text('Aller à la Page 2'),
             ),
           ],
         ),
@@ -66,30 +68,30 @@ class PageDeux extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Page 2'), centerTitle: true),
+      appBar: AppBar(title: const Text('Page 2'), centerTitle: true),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ValueListenableBuilder(
-              valueListenable: _scoreGoal,
-              builder: (BuildContext context, dynamic value, Widget? child) {
-                return Text('Score : $value');
+            ValueListenableBuilder<int>(
+              valueListenable: _scoreGlobal,
+              builder: (context, int value, child) {
+                return Text('Score : $value', style: const TextStyle(fontSize: 24));
               },
             ),
-            SizedBox(height: 15.0),
+            const SizedBox(height: 15.0),
             ElevatedButton(
               onPressed: () {
-                _scoreGoal.value++;
+                _scoreGlobal.value++;
               },
-              child: Text('Ajouter +1'),
+              child: const Text('Ajouter +1'),
             ),
-            SizedBox(height: 10.0),
+            const SizedBox(height: 10.0),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context, PageUn());
+                Navigator.pop(context); // ⚠️ Correction
               },
-              child: Text('Retour'),
+              child: const Text('Retour'),
             ),
           ],
         ),
