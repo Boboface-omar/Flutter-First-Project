@@ -406,8 +406,9 @@ class UsersList extends StatelessWidget {
             IconButton(
               tooltip: 'Ajouter $name',
               onPressed: () {
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text('$name ajouté')));
+                // ScaffoldMessenger.of(context)
+                //     .showSnackBar(SnackBar(content: Text('$name ajouté')));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const PageDetail()));
               },
               style: IconButton.styleFrom(
                 backgroundColor: const Color(0xFFE0F2EF),
@@ -420,5 +421,14 @@ class UsersList extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class PageDetail extends StatelessWidget {
+  const PageDetail({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(body: Center(child: Text('DETAIL', style: TextStyle(fontSize: 40, color: Colors.amber),),),);
   }
 }
