@@ -124,48 +124,49 @@ class Compteur extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ValueListenableBuilder(
-              valueListenable: _compteur,
-              builder: (BuildContext context, int value, Widget? child) {
-                return Text('Score : $value');
-              },
-            ),
-            SizedBox(height: 20),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    _compteur.value++;
-                  },
-                  child: Text('Ajouter +1'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    _compteur.value--;
-                  },
-                  child: Text('Reduire -1'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          const PageDeux();
-                        },
-                      ),
-                    );
-                  },
-                  child: Text('Page Deux'),
-                ),
-              ],
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ValueListenableBuilder(
+                valueListenable: _compteur,
+                builder: (BuildContext context, int value, Widget? child) {
+                  return Text('Score : $value');
+                },
+              ),
+              SizedBox(height: 20),
+          
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      _compteur.value++;
+                    },
+                    child: Text('Ajouter +1'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      _compteur.value--;
+                    },
+                    child: Text('Reduire -1'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PageDeux(),
+                        ),
+                      );
+                    },
+                    child: Text('Page Deux'),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -179,41 +180,44 @@ class PageDeux extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ValueListenableBuilder(
-              valueListenable: _compteur,
-              builder: (BuildContext context, int value, Widget? child) {
-                return Text('Score : $value');
-              },
-            ),
-            SizedBox(height: 20),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    _compteur.value++;
-                  },
-                  child: Text('Ajouter +1'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    _compteur.value--;
-                  },
-                  child: Text('Reduire -1'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text('Page Deux'),
-                ),
-              ],
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ValueListenableBuilder(
+                valueListenable: _compteur,
+                builder: (BuildContext context, int value, Widget? child) {
+                  return Text('Score : $value');
+                },
+              ),
+              SizedBox(height: 20),
+          
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      _compteur.value++;
+                    },
+                    child: Text('Ajouter +1'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      _compteur.value--;
+                    },
+                    child: Text('Reduire -1'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text('Page Une'),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
