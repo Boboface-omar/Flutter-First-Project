@@ -1,111 +1,13 @@
-// import 'package:flutter/material.dart';
-
-// final ValueNotifier<int> _scoreGlobal = ValueNotifier<int>(0);
-
-// void main() {
-//   runApp(const MyApp());
-// }
-
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return const MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       home: PageUn(),
-//     );
-//   }
-// }
-
-// class PageUn extends StatelessWidget {
-//   const PageUn({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: const Text('Page 1'), centerTitle: true),
-//       body: Center(
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: [
-//             ValueListenableBuilder<int>(
-//               valueListenable: _scoreGlobal,
-//               // ⚠️ Typé en int
-//               builder: (context, int value, child) {
-//                 return Text('Score : $value', style: const TextStyle(fontSize: 24));
-//               },
-//             ),
-//             const SizedBox(height: 15.0),
-//             ElevatedButton(
-//               onPressed: () {
-//                 _scoreGlobal.value++;
-//               },
-//               child: const Text('Ajouter +1'),
-//             ),
-//             const SizedBox(height: 10.0),
-//             ElevatedButton(
-//               onPressed: () {
-//                 Navigator.push(
-//                   context,
-//                   MaterialPageRoute(
-//                     builder: (context) => const PageDeux(),
-//                   ),
-//                 );
-//               },
-//               child: const Text('Aller à la Page 2'),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-// class PageDeux extends StatelessWidget {
-//   const PageDeux({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: const Text('Page 2'), centerTitle: true),
-//       body: Center(
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: [
-//             ValueListenableBuilder<int>(
-//               valueListenable: _scoreGlobal,
-//               builder: (context, int value, child) {
-//                 return Text('Score : $value', style: const TextStyle(fontSize: 24));
-//               },
-//             ),
-//             const SizedBox(height: 15.0),
-//             ElevatedButton(
-//               onPressed: () {
-//                 _scoreGlobal.value++;
-//               },
-//               child: const Text('Ajouter +1'),
-//             ),
-//             const SizedBox(height: 10.0),
-//             ElevatedButton(
-//               onPressed: () {
-//                 Navigator.pop(context); // ⚠️ Correction
-//               },
-//               child: const Text('Retour'),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
-ValueNotifier<int> _compteur = ValueNotifier<int>(0);
+import 'dart:convert';
+
+// ⚠️ FIX 1 : C'est une LISTE d'IDs (int), pas un seul int
+final ValueNotifier<List<int>> _favoris = ValueNotifier<List<int>>([]);
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -113,112 +15,138 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: Compteur());
+    return MaterialApp(debugShowCheckedModeBanner: false, home: PostsPage());
   }
 }
 
-class Compteur extends StatelessWidget {
-  const Compteur({super.key});
+class PostsPage extends StatelessWidget {
+  PostsPage({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ValueListenableBuilder(
-                valueListenable: _compteur,
-                builder: (BuildContext context, int value, Widget? child) {
-                  return Text('Score : $value');
-                },
-              ),
-              SizedBox(height: 20),
-          
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      _compteur.value++;
-                    },
-                    child: Text('Ajouter +1'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      _compteur.value--;
-                    },
-                    child: Text('Reduire -1'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const PageDeux(),
-                        ),
-                      );
-                    },
-                    child: Text('Page Deux'),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
+  // ⚠️ FIX 4 : On stocke le Future UNE SEULE FOIS
+  Future<List<Map<String, dynamic>>> get _futurePosts => _recupPosts();
+
+  Future<List<Map<String, dynamic>>> _recupPosts() async {
+    final response = await http.get(
+      Uri.parse('https://jsonplaceholder.typicode.com/posts'),
     );
-  }
-}
 
-class PageDeux extends StatelessWidget {
-  const PageDeux({super.key});
+    if (response.statusCode == 200) {
+      final decoded = jsonDecode(response.body);
+      return List<Map<String, dynamic>>.from(decoded);
+    } else {
+      throw Exception('Erreur HTTP : ${response.statusCode}');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ValueListenableBuilder(
-                valueListenable: _compteur,
-                builder: (BuildContext context, int value, Widget? child) {
-                  return Text('Score : $value');
-                },
-              ),
-              SizedBox(height: 20),
-          
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      _compteur.value++;
-                    },
-                    child: Text('Ajouter +1'),
+      appBar: AppBar(
+        title: const Text('Publications'),
+        actions: [
+          // ⚠️ FIX 1 (suite) : On écoute une List<int>
+          ValueListenableBuilder<List<int>>(
+            valueListenable: _favoris,
+            builder: (context, favoris, _) {
+              return Padding(
+                padding: const EdgeInsets.only(right: 16),
+                child: Center(
+                  child: Row(
+                    children: [
+                      const Icon(Icons.favorite, color: Colors.red),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${favoris.length}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      _compteur.value--;
-                    },
-                    child: Text('Reduire -1'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text('Page Une'),
-                  ),
-                ],
-              ),
-            ],
+                ),
+              );
+            },
           ),
-        ),
+        ],
+      ),
+      body: FutureBuilder<List<Map<String, dynamic>>>(
+        future: _futurePosts, // ⚠️ FIX 4 : Sans parenthèses
+        builder: (context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return Center(child: Text('Erreur : ${snapshot.error}'));
+          }
+
+          final posts = snapshot.data!;
+
+          return Padding(
+            padding: const EdgeInsets.all(15),
+            child: ListView.builder(
+              itemCount: posts.length,
+              itemBuilder: (context, index) {
+                final post = posts[index];
+                final int postId = post['id']; // On cast l'ID en int
+
+                return Card(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  child: ListTile(
+                    // ⚠️ FIX 2 : On utilise les bonnes clés de l'API /posts
+                    leading: const Icon(Icons.article),
+                    title: Text(
+                      post['title'] ?? 'Sans titre',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    subtitle: Text(
+                      post['body'] ?? 'Pas de description',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    // ⚠️ FIX 3 : Le bouton favori
+                    trailing: ValueListenableBuilder<List<int>>(
+                      valueListenable: _favoris,
+                      builder: (context, favoris, _) {
+                        // On vérifie si l'ID du post est dans la liste
+                        final bool isFav = favoris.contains(postId);
+
+                        return IconButton(
+                          onPressed: () {
+                            // On crée une copie de la liste
+                            final List<int> currentFavoris = List<int>.from(
+                              favoris,
+                            );
+
+                            if (isFav) {
+                              currentFavoris.remove(postId); // Retirer
+                            } else {
+                              currentFavoris.add(postId); // Ajouter
+                            }
+
+                            // On met à jour la ValueNotifier globale
+                            _favoris.value = currentFavoris;
+                          },
+                          // L'icône change selon l'état
+                          icon: Icon(
+                            isFav ? Icons.favorite : Icons.favorite_border,
+                            color: isFav ? Colors.red : null,
+                          ),
+                        );
+                      },
+                    ),
+                    onTap: () {
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(content: Text(post['title'])));
+                    },
+                  ),
+                );
+              },
+            ),
+          );
+        },
       ),
     );
   }
