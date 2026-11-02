@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-final ValueNotifier<bool> _eclairage = ValueNotifier<bool>(true);
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(MyApp());
@@ -11,42 +10,67 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<bool>(
-      valueListenable: _eclairage,
-      builder: (context, isLight, child) {
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData.light(),
-          darkTheme: ThemeData.dark(),
-          themeMode: isLight ? ThemeMode.light : ThemeMode.dark,
-          home: const Homepage(),
-        );
-      },
-    );
+    return ParametresPage();
   }
 }
 
-class Homepage extends StatelessWidget {
-  const Homepage({super.key});
+class ParametresPage extends StatefulWidget {
+  const ParametresPage({super.key});
+
+  @override
+  State<ParametresPage> createState() => _ParametresPageState();
+}
+
+class _ParametresPageState extends State<ParametresPage> {
+  int _compteur = 0;
+  bool _modeSombre = false;
+  late SharedPreferences _prefs;
+
+  @override
+  void initState() {
+    super.initState();
+    _chargerDonnees();
+  }
+
+  Future<void> _chargerDonnees() async {
+    _prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _compteur = _prefs.getInt('compteur') ?? 0;
+      _modeSombre = _prefs.getBool('modeSombre') ?? false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Mode'),
-        actions: [
-          IconButton(
-            onPressed: () {
-              _eclairage.value = !_eclairage.value;
-            },
-            icon: ValueListenableBuilder(
-              valueListenable: _eclairage,
-              builder: (BuildContext context, bool value, Widget? child) {
-                return Icon(value ? Icons.light_mode : Icons.dark_mode);
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      themeMode: _modeSombre ? ThemeMode.dark : ThemeMode.light,
+      darkTheme: ThemeData.dark(),
+      home: Scaffold(
+        appBar: AppBar(title: Text('Preferences'), centerTitle: true),
+        body: Column(
+          children: [
+            Text('Compteur : $_compteur', style: TextStyle(fontSize: 24)),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                _compteur++;
+                _prefs.setInt('compteur', _compteur);
+              },
+              child: Text('+1'),
+            ),
+            SizedBox(height: 15),
+            SwitchListTile(
+              value: _modeSombre,
+              onChanged: (value) {
+                setState(() {
+                  _modeSombre = value;
+                  _prefs.setBool('modeSombre', value);
+                });
               },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
