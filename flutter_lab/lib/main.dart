@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -10,64 +10,78 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ParametresPage();
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: MemoirePage(),
+    );
   }
 }
 
-class ParametresPage extends StatefulWidget {
-  const ParametresPage({super.key});
+class MemoirePage extends StatefulWidget {
+  const MemoirePage({super.key});
 
   @override
-  State<ParametresPage> createState() => _ParametresPageState();
+  State<MemoirePage> createState() => _MemoirePageState();
 }
 
-class _ParametresPageState extends State<ParametresPage> {
-  int _compteur = 0;
-  bool _modeSombre = false;
+class _MemoirePageState extends State<MemoirePage> {
+  final TextEditingController _nomController = TextEditingController();
   late SharedPreferences _prefs;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _chargerDonnees();
+    _chargerNom();
   }
 
-  Future<void> _chargerDonnees() async {
+  // ⚠️ FIX 4 : Le dispose
+  @override
+  void dispose() {
+    _nomController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _chargerNom() async {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
-      _compteur = _prefs.getInt('compteur') ?? 0;
-      _modeSombre = _prefs.getBool('modeSombre') ?? false;
+      _nomController.text = _prefs.getString('nom_utilisateur') ?? '';
+      _isLoading = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      themeMode: _modeSombre ? ThemeMode.dark : ThemeMode.light,
-      darkTheme: ThemeData.dark(),
-      home: Scaffold(
-        appBar: AppBar(title: Text('Preferences'), centerTitle: true),
-        body: Column(
+    // ⚠️ FIX 3 : Ajout du Scaffold
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Compteur : $_compteur', style: TextStyle(fontSize: 24)),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                _compteur++;
-                _prefs.setInt('compteur', _compteur);
-              },
-              child: Text('+1'),
+            TextField(
+              controller: _nomController,
+              decoration: const InputDecoration(labelText: 'Ton Nom'),
             ),
-            SizedBox(height: 15),
-            SwitchListTile(
-              value: _modeSombre,
-              onChanged: (value) {
-                setState(() {
-                  _modeSombre = value;
-                  _prefs.setBool('modeSombre', value);
-                });
+            const SizedBox(height: 20),
+            
+            // ⚠️ FIX 5 : onPressed devient async
+            ElevatedButton(
+              onPressed: () async {
+                // ⚠️ FIX 1 : Clé corrigée
+                await _prefs.setString('nom_utilisateur', _nomController.text);
+                
+                // ⚠️ FIX 2 : Pas de setState pour le SnackBar
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Nom sauvegardé !')),
+                );
               },
+              child: const Text('Sauvegarder'),
             ),
           ],
         ),
