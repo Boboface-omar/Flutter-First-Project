@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(const MyApp());
@@ -9,136 +11,88 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return  MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Formulaire(),
+      home: CommentPage(),
     );
   }
 }
 
-class Formulaire extends StatefulWidget {
-  const Formulaire({super.key});
+class CommentPage extends StatelessWidget {
+   CommentPage({super.key});
 
-  @override
-  State<Formulaire> createState() => _FormulaireState();
-}
+  // ⚠️ FIX 1 : final, pas get
+  late final Future<List<Map<String, dynamic>>> _futureComments = _recupComments();
 
-class _FormulaireState extends State<Formulaire> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _passwordConfirmController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
+  Future<List<Map<String, dynamic>>> _recupComments() async {
+    final response = await http.get(
+      Uri.parse('https://jsonplaceholder.typicode.com/comments'),
+    );
 
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    _passwordConfirmController.dispose();
-    super.dispose();
+    if (response.statusCode == 200) {
+      final decoded = jsonDecode(response.body);
+      return List<Map<String, dynamic>>.from(decoded);
+    } else {
+      throw Exception('Erreur HTTP : ${response.statusCode}');
+    }
+  }
+
+  Widget _buildLoader() {
+    return const Center(child: CircularProgressIndicator());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Inscription'), centerTitle: true),
-      // ⚠️ FIX 3 : Center supprimé, SingleChildScrollView gère ça très bien
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              // CHAMP EMAIL
-              TextFormField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  prefixIcon: const Icon(Icons.email),
-                ),
-                validator: (value) {
-                  // ⚠️ FIX 1 : isEmpty au lieu de isNotEmpty
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Email Obligatoire';
-                  }
-                  if (!value.contains('@')) {
-                    return 'Email Invalide';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 15),
+      appBar: AppBar(title: const Text('Commentaires'), centerTitle: true),
+      body: FutureBuilder<List<Map<String, dynamic>>>(
+        future: _futureComments,
+        // ⚠️ FIX 4 : Typage du snapshot
+        builder: (context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return _buildLoader();
+          }
 
-              // CHAMP MOT DE PASSE
-              TextFormField(
-                controller: _passwordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: 'Mot de passe',
-                  prefixIcon: const Icon(Icons.lock),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Mot de passe Obligatoire';
-                  }
-                  // ⚠️ FIX 2 : < 6 au lieu de > 6
-                  if (value.length < 6) {
-                    return 'Au moins 6 caractères';
-                  }
-                  return null;
-                },
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                '${snapshot.error}',
+                style: const TextStyle(color: Colors.red, fontSize: 20),
               ),
-              const SizedBox(height: 15),
+            );
+          }
+          
+          final comments = snapshot.data!;
 
-              // CHAMP CONFIRMATION
-              TextFormField(
-                controller: _passwordConfirmController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: 'Confirmer Votre Mot de passe',
-                  prefixIcon: const Icon(Icons.lock_outline),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez confirmer';
-                  }
-                  if (value != _passwordController.text) {
-                    return 'Les mots de passe ne correspondent pas';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 25),
+          return ListView.separated(
+            itemCount: comments.length,
+            padding: const EdgeInsets.all(20),
+            itemBuilder: (context, index) {
+              final comment = comments[index];
 
-              // BOUTON
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Inscription validée pour : ${_emailController.text}'),
-                          duration: const Duration(seconds: 2),
-                        ),
-                      );
-                    }
-                  },
-                  child: const Text("S'inscrire"),
+              return ListTile(
+                // J'ai gardé ton excellent choix de l'initiale
+                leading: CircleAvatar(child: Text(comment['name'][0])),
+                // ⚠️ FIX 2 : L'email comme demandé
+                title: Text(
+                  comment['email'],
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
-              ),
-            ],
-          ),
-        ),
+                subtitle: Text(
+                  comment['body'],
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(comment['name'])),
+                  );
+                },
+              );
+            },
+            separatorBuilder: (context, index) => const Divider(),
+          );
+        },
       ),
     );
   }
