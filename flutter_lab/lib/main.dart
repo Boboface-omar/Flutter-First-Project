@@ -1,6 +1,5 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_lab/open_router.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,88 +10,146 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: CommentPage(),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+      ),
+      home: const MessagePage(),
     );
   }
 }
 
-class CommentPage extends StatelessWidget {
-   CommentPage({super.key});
+class MessagePage extends StatefulWidget {
+  const MessagePage({super.key});
 
-  // ⚠️ FIX 1 : final, pas get
-  late final Future<List<Map<String, dynamic>>> _futureComments = _recupComments();
+  @override
+  State<MessagePage> createState() => _MessagePageState();
+}
 
-  Future<List<Map<String, dynamic>>> _recupComments() async {
-    final response = await http.get(
-      Uri.parse('https://jsonplaceholder.typicode.com/comments'),
-    );
+class _MessagePageState extends State<MessagePage> {
+  final TextEditingController _messageController = TextEditingController();
+  String answer = '';
+  String? errorMessage;
+  bool isLoading = false;
 
-    if (response.statusCode == 200) {
-      final decoded = jsonDecode(response.body);
-      return List<Map<String, dynamic>>.from(decoded);
-    } else {
-      throw Exception('Erreur HTTP : ${response.statusCode}');
-    }
+  @override
+  void dispose() {
+    _messageController.dispose();
+    super.dispose();
   }
 
-  Widget _buildLoader() {
-    return const Center(child: CircularProgressIndicator());
+  void _talkToGpt() async {
+    final message = _messageController.text.trim();
+    if (message.isEmpty) {
+      setState(() {
+        errorMessage = 'Écris un message avant d’envoyer.';
+        answer = '';
+      });
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+    });
+
+    try {
+      final theAnswer = await getOpenRouterResponse(message);
+      if (!mounted) return;
+      setState(() {
+        answer = theAnswer;
+        isLoading = false;
+      });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        answer = '';
+        errorMessage = error.toString().replaceFirst('Exception: ', '');
+        isLoading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Commentaires'), centerTitle: true),
-      body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: _futureComments,
-        // ⚠️ FIX 4 : Typage du snapshot
-        builder: (context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return _buildLoader();
-          }
-
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                '${snapshot.error}',
-                style: const TextStyle(color: Colors.red, fontSize: 20),
-              ),
-            );
-          }
-          
-          final comments = snapshot.data!;
-
-          return ListView.separated(
-            itemCount: comments.length,
-            padding: const EdgeInsets.all(20),
-            itemBuilder: (context, index) {
-              final comment = comments[index];
-
-              return ListTile(
-                // J'ai gardé ton excellent choix de l'initiale
-                leading: CircleAvatar(child: Text(comment['name'][0])),
-                // ⚠️ FIX 2 : L'email comme demandé
-                title: Text(
-                  comment['email'],
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+      appBar: AppBar(title: const Text('Ma première app'), centerTitle: true),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 480),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Écris ton message',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.headlineSmall,
                 ),
-                subtitle: Text(
-                  comment['body'],
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+                const SizedBox(height: 24),
+                TextField(
+                  controller: _messageController,
+                  textInputAction: TextInputAction.done,
+                  onSubmitted: (_) => _talkToGpt(),
+                  decoration: const InputDecoration(
+                    labelText: 'Ton message',
+                    hintText: 'Saisis ton texte ici',
+                    border: OutlineInputBorder(),
+                  ),
                 ),
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(comment['name'])),
-                  );
-                },
-              );
-            },
-            separatorBuilder: (context, index) => const Divider(),
-          );
-        },
+                const SizedBox(height: 16),
+                if (isLoading)
+                  const Center(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                if (errorMessage != null)
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.red.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      errorMessage!,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  ),
+                if (answer.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        answer,
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 12),
+                Text(
+                  'Appuie sur le bouton pour valider.',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _talkToGpt,
+        tooltip: 'Valider le message',
+        child: const Icon(Icons.send),
       ),
     );
   }

@@ -5,45 +5,37 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:flutter_lab/main.dart';
 
 void main() {
-  test('splash_person asset exists', () {
-    expect(File('assets/images/splash_person.png').existsSync(), isTrue);
-  });
-
-  testWidgets('renders app shell', (WidgetTester tester) async {
+  testWidgets('renders the centered message form', (WidgetTester tester) async {
     await tester.pumpWidget(const MyApp());
 
-    expect(find.text('Statefull BottomNav'), findsOneWidget);
-    expect(find.byType(NavigationBar), findsOneWidget);
+    expect(find.text('Ma première app'), findsOneWidget);
+    expect(find.text('Écris ton message'), findsOneWidget);
+    expect(find.byType(TextField), findsOneWidget);
+    expect(find.text('Appuie sur le bouton pour valider.'), findsOneWidget);
+    expect(find.byType(FloatingActionButton), findsOneWidget);
   });
 
-  testWidgets('password visibility can be toggled', (
+  testWidgets('floating action button displays the entered message', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(const MyApp());
 
-    final passwordField = find.byWidgetPredicate(
-      (widget) =>
-          widget is TextField && widget.decoration?.labelText == 'Mot de passe',
+    await tester.enterText(find.byType(TextField), 'Bonjour Flutter');
+    await tester.tap(find.byType(FloatingActionButton));
+    await tester.pump();
+
+    expect(
+      find.descendant(
+        of: find.byType(SnackBar),
+        matching: find.text('Bonjour Flutter'),
+      ),
+      findsOneWidget,
     );
-    expect(tester.widget<TextField>(passwordField).obscureText, isTrue);
-
-    await tester.tap(find.byTooltip('Afficher le mot de passe'));
-    await tester.pump();
-
-    expect(tester.widget<TextField>(passwordField).obscureText, isFalse);
-    expect(find.byTooltip('Masquer le mot de passe'), findsOneWidget);
-
-    await tester.tap(find.byTooltip('Masquer le mot de passe'));
-    await tester.pump();
-
-    expect(tester.widget<TextField>(passwordField).obscureText, isTrue);
   });
 }
