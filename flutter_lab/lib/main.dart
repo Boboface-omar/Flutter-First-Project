@@ -94,7 +94,7 @@ class _MessagePageState extends State<MessagePage> {
                   controller: _messageController,
                   textInputAction: TextInputAction.done,
                   onSubmitted: (_) => _talkToGpt(),
-                  decoration: const InputDecoration(
+                  decoration: const InputDecoration( 
                     labelText: 'Ton message',
                     hintText: 'Saisis ton texte ici',
                     border: OutlineInputBorder(),
